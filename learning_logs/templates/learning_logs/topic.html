@@ -1,0 +1,35 @@
+{% extends 'learning_logs/base.html' %}
+
+{% block title %}{{ topic.text }}{% endblock title %}
+
+{% block page_header %}
+    <h1 class="text-center">{{ topic.text }}</h1>
+{% endblock page_header %}
+
+{% block content %}
+
+  <p class="text-center">
+       <!--新增条目的链接-->
+      <a href="{% url 'learning_logs:new_entry' topic.id %}"> +新建条目 </a>
+  </p>
+
+<!--显示本主题的相关条目-->
+    {% for entry in entries %}
+      <!--各条目卡片内容，设置间隙为3档-->
+      <div class="card mb-3">
+          <!--卡片头部样式及内容--><!--文本后增加编辑文本链接,small,让字体小一点-->
+          <h4 class="card-header">{{ entry.date_added|date:'Y M d, H:i'}}
+              <small><a href="{% url 'learning_logs:edit_entry' entry.id %}"
+                        style="padding: 0 15px">编辑本条目</a></small>
+          </h4>
+          <!--正文部分-->
+          <div class="card-body" style="max-height: 200px; overflow-y: auto;" >{{ entry.text|linebreaks }}</div>   <!--仅显示50字符-->
+      </div>
+
+    {% empty %}
+    <li>此主题暂未创建任何条目。</li>
+    {% endfor %}
+
+
+{% endblock content %}
+

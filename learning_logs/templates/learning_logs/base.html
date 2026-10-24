@@ -1,0 +1,112 @@
+<!--
+1、创建网站时，一些通用的元素会出现在不同的网页为方面，可创建一个父模板。
+2、本文件是一个“父模板”网页
+3、html是骨架，css是网页的外观。javascript是肌肉和神经，管理交互动作和逻辑
+-->
+
+
+<!--声明%%%%%%%%%%%%%%%%%%%%%%%%%%-->
+<!DOCTYPE html>
+<html lang="en">
+
+<!--头部%%%%%%%%%%%%%%%%%%%%%%%%%%-->
+<head>
+    <meta charset="UTF-8">
+    <!--设置一个默认标题，block 可保证子页面可自行修改-->
+    <title>{% block title %}我的学习笔记{% endblock title %}</title>
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+
+<body>
+        <!-- ❶ 定义导航栏的外壳 -->
+        <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
+            <!-- 容器：让内容不要贴着屏幕边缘，留出一点边距 -->
+            <div class="container-fluid">
+
+                <!-- ❷ 网站名称（Logo），点击会跳转到主页 -->
+                <a class="navbar-brand" href="{% url 'learning_logs:index' %}">
+                    学习笔记</a>
+
+                <!-- ❸ 手机端显示的“汉堡菜单”按钮（三条横线）。在电脑大屏幕上会隐藏，在手机上出现 -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarCollapse" aria-controls="navbarCollapse"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- ❹ 可折叠的导航菜单区域。在电脑上直接展开，在手机上点击上面的按钮才会弹出来 -->
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+
+                    <!-- ❺ 导航链接列表。me-auto 表示把右边的空间全占了，让左边的链接靠左对齐 -->
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <!-- ❻ 列表项（li） -->
+                        <li class="nav-item">
+                            <!-- ❼ 具体链接，点击跳转到 Topics 页面 -->
+                            <a class="nav-link" href="{% url 'learning_logs:topics' %}">
+                                主题</a>
+                        </li>
+                    </ul> <!-- 定义导航栏左侧链接的代码到此结束 -->
+
+                    <!-- ❹ 与账户相关的链接（放在右侧） -->
+                <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+
+                    <!-- ❺ 判断用户是否已登录 -->
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <!-- ❻ 如果已登录，显示问候语和用户名 -->
+                            <span class="navbar-text me-2">欢迎您， {{ user.username }}.</span>
+                        </li>
+                    {% else %}
+                        <!-- 如果未登录，显示注册和登录按钮 -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:register' %}">注册</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:login' %}">登录</a>
+                        </li>
+                    {% endif %}
+
+                </ul> <!-- 与账户相关的链接到此结束 -->
+
+                <!-- 判断用户是否已登录 ，若登陆，添加退出登陆按钮-->
+                {% if user.is_authenticated %}
+                    <!-- 如果已登录，显示注销按钮 -->
+                    <!-- 注意：Django 建议注销操作使用 POST 请求，而不是简单的超链接跳转，更安全 -->
+                    <form action="{% url 'accounts:logout' %}" method='post'>
+                        <!-- 必须加上这行！这是 Django 的跨站请求伪造（CSRF）保护令牌 -->
+                        {% csrf_token %}
+
+                        <!-- ❶ 注销按钮 -->
+                        <button name='submit' class='btn btn-outline-secondary btn-sm'>
+                            退出登录
+                        </button>
+                    </form>
+                {% endif %}
+                <!-- 如果没登录，这里什么都不显示（因为前面的代码已经显示了注册和登录链接） -->
+
+                </div> <!-- 定义导航栏可折叠部分的代码到此结束 -->
+            </div> <!-- 定义导航栏容器的代码到此结束 -->
+        </nav> <!-- 定义导航栏的代码到此结束 -->
+
+        <!-- ❶ 主内容区域，使用 container 让内容居中且留白 -->
+        <main class="container">
+
+            <!-- ❷ 页面头部区块（可选的） -->
+            <div class="pb-2 mb-2 border-bottom">
+                <!-- 定义了一个名叫 page_header 的坑，子网页可以往这里填标题 -->
+                {% block page_header %}{% endblock page_header %}
+            </div>
+
+            <!-- ❸ 页面主体内容区块 -->
+            <div>
+                <!-- 定义了名叫 content 的坑，子网页的核心内容都填在这里 -->
+                {% block content %}{% endblock content %}
+            </div>
+
+        </main>
+
+    </body>
+
+</html>

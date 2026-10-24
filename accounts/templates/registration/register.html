@@ -1,0 +1,20 @@
+{% extends 'learning_logs/base.html' %}
+{% load django_bootstrap5 %}
+
+{% block page_header %}
+    <h2>新用户注册</h2>
+{% endblock page_header %}
+
+{% block content %}
+  <div class="row">
+      <div class="col-md-4">
+          <form action="{% url 'accounts:register' %}" method='post'> <!--form两个参数为位置和方法,中间不用逗号，用空格-->
+              {% csrf_token %}    <!--跨站请求伪造-->
+              {% bootstrap_form form %}
+              {% bootstrap_button button_type='submit' content='注册' %}
+          </form>
+      </div>
+  </div>
+
+{% endblock content %}
+

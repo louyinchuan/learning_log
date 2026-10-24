@@ -1,0 +1,25 @@
+{% extends 'learning_logs/base.html' %}  <!--  继承模板 -->
+
+{% block title %}主页{% endblock title %}
+
+{% block page_header %}
+  <div class="p-3 mb-4 bg-light border rounded-3">
+    <div class="container-fluid py-4">
+
+      <h1 class="display-3 text-center"> 好记性不如LAN笔头!</h1>
+      <p class="text-center"> Make your own Learning Log, </p>
+      <p class=" text-center">and keep a list of topics you're learning about.</p>
+      <p class=" text-center">Whenever you learn something new about a topic,</p>
+      <p class=" text-center">make an entry summarizing what you've learned.</p>
+      <p class=" text-center">记性会老，会疲惫，会迷路，</p>
+      <p class=" text-center">但墨迹不会。</p>
+      <a class= "btn btn-primary btn-lg mt-1 d-block mx-auto"
+         style="width: fit-content"
+         href="{% url 'accounts:register' %}">点此注册账号 &raquo;&raquo;</a>
+
+    </div>
+  </div>
+
+
+{% endblock page_header %}
+

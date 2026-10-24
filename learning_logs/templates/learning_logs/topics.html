@@ -1,0 +1,26 @@
+{% extends 'learning_logs/base.html' %}  <!--  继承模板 -->
+
+{% block title %}主题{% endblock title %}
+
+{% block page_header %}
+    <h1 class="text-center">主题</h1>
+{% endblock page_header %}
+
+{% block content %}
+
+<ul class="list-group border-bottom pb-2 md-4 ">
+    {% for topic in topics %}
+      <li class="list-group-item border-0 text-center">
+          <a href="{% url 'learning_logs:topic' topic.id %}"> {{ topic.text }} </a>   <!--让主题变为链接-->
+      </li>
+    {% empty %}
+      <li class="list-group-item border-0"> 暂未创建任何主题. </li>
+    {% endfor %}
+
+</ul>
+
+<div class="text-center">
+    <a href="{% url 'learning_logs:new_topic' %}"  > +新建主题 </a>  <!--添加新主题的链接-->
+</div>
+
+{% endblock content %}
