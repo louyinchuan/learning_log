@@ -30,6 +30,24 @@ def topic(request, topic_id):
     topic = get_object_or_404(Topic,id=topic_id,owner=request.user)  #这里如果内容不存在，或用户无权返回404
     # if topic.owner != request.user:
         # raise Http404('此页面不存在，或您无权限访问。')
+
+    # 增加删除条目的代码
+    # 👇 新增这几行：拦截删除动作
+    if request.method == 'POST':
+        entry_id = request.POST.get('delete_entry_id')
+        if entry_id:
+            # 找到这条记录，确保它属于当前主题和当前用户，然后删除
+            entry = get_object_or_404(Entry, id=entry_id, topic=topic)
+            entry.delete()
+            # 删除后，重定向回当前主题页面（刷新页面）
+            return redirect('learning_logs:topic', topic_id=topic_id)
+    # 👆 新增结束
+
+        # 👇 新增：处理删除主题的逻辑
+        if 'delete_topic' in request.POST:
+            topic.delete()  # 删掉整个主题（关联的条目也会因为外键的级联删除自动清空）
+            return redirect('learning_logs:topics')  # 删完后跳回所有主题列表页面
+
     entries = topic.entry_set.order_by('date_added')
     # 返回查询集。因为entry通过外键关联到topic，根据django，可用entry_set
     # topic.entry_set : 属于该主题的条目
