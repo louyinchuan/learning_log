@@ -7,7 +7,7 @@
 
 {% block content %}
   <div class="row">
-      <div class="col-md-4">
+      <div class="col-12 col-md-4 col-lg-3">    <!--2.0优化手机显示-->
           <form action="{% url 'accounts:register' %}" method='post'> <!--form两个参数为位置和方法,中间不用逗号，用空格-->
               {% csrf_token %}    <!--跨站请求伪造-->
               {% bootstrap_form form %}

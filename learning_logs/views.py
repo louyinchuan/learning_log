@@ -47,10 +47,16 @@ def new_topic(request):
         form = TopicForm(data = request.POST)   # 为填入数据创建一个表单
         # 然后判断表单是否合法
         if form.is_valid():
-            new_topic = form.save(commit=False) # 记住主题，暂不存入
-            new_topic.owner = request.user      # 指定新主题的owner外键
-            new_topic.save()
-            return redirect('learning_logs:topics')    # 合法就保存并返回主题集页
+            text = form.cleaned_data['text']
+            # 主题查重
+            if Topic.objects.filter(owner=request.user, text__iexact=text).exists():
+                # 如果查到了，给表单塞个错误，不保存
+                form.add_error('text', '你名下已经有同名的主题啦，换一个吧！')
+            else:
+                new_topic = form.save(commit=False) # 记住主题，暂不存入
+                new_topic.owner = request.user      # 指定新主题的owner外键
+                new_topic.save()
+                return redirect('learning_logs:topics')    # 合法就保存并返回主题集页
     context = {'form': form}  # 把信息打包成字典，共render调用
     return render(request, 'learning_logs/new_topic.html', context) # 还在新建主题页渲染错误信息
 
@@ -62,10 +68,15 @@ def new_entry(request,topic_id):
     else :
         form = EntryForm(data= request.POST)
         if form.is_valid():
-            new_entry = form.save(commit=False)  # 先不保存，也无法写入，还差主题外键
-            new_entry.topic = topic  # 获取主题外键
-            new_entry.save()   # 保存
-            return redirect('learning_logs:topic',topic_id=topic_id)
+            # 👇 【加在这里】检查这个主题下有没有相同的内容
+            text = form.cleaned_data['text']
+            if Entry.objects.filter(topic=topic, text=text).exists():
+                form.add_error('text', '这个条目内容已经存在啦，不用再记一次！')
+            else:
+                new_entry = form.save(commit=False)  # 先不保存，也无法写入，还差主题外键
+                new_entry.topic = topic  # 获取主题外键
+                new_entry.save()   # 保存
+                return redirect('learning_logs:topic',topic_id=topic_id)
 
     context = {'topic': topic, 'form': form}
     return render(request, 'learning_logs/new_entry.html', context)
